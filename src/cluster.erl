@@ -16,9 +16,13 @@
 -export([start/0,
 	 extract_app_spec/2]).
 
--define(StartConfigC0,"../app_specs/dbase_100_c0.app_spec").
--define(StartConfigC1,"../app_specs/dbase_100_c1.app_spec").
--define(StartConfigC2,"../app_specs/dbase_100_c2.app_spec").
+-define(SyslogAppSpecC0,"../app_specs/syslog_100_c0.app_spec").
+-define(SyslogAppSpecC1,"../app_specs/syslog_100_c1.app_spec").
+-define(SyslogAppSpecC2,"../app_specs/syslog_100_c2.app_spec").
+
+-define(DbaseAppSpecC0,"../app_specs/dbase_100_c0.app_spec").
+-define(DbaseAppSpecC1,"../app_specs/dbase_100_c1.app_spec").
+-define(DbaseAppSpecC2,"../app_specs/dbase_100_c2.app_spec").
 
 %% ====================================================================
 %% External functions
@@ -30,7 +34,11 @@
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
+ %   control(),   
+    syslog(),
+    
     dbase(),
+ 
     ok.
 
 %% --------------------------------------------------------------------
@@ -38,6 +46,7 @@ start()->
 %% Description: Initiate the eunit tests, set upp needed processes etc
 %% Returns: non
 %% --------------------------------------------------------------------
+
 lock_test_1()->
     %% db_lock timeout set to
 %
@@ -81,12 +90,18 @@ syslog()->
 %% Returns: non
 %% --------------------------------------------------------------------
 dbase()->
-    {ok,AppSpec}=file:consult(?StartConfigC2), %Start system from c2 host
+    {ok,AppSpec}=file:consult(?DbaseAppSpecC2), %Start system from c2 host
    
     DbaseEnvs=extract_app_spec(env_vars,AppSpec),
     GitPath=extract_app_spec(git_path,AppSpec),
-    StartCmd=extract_app_spec(git_path,AppSpec),
-
+    StartCmd=extract_app_spec(start_cmd,AppSpec),
+    %GitUser=extract_app_spec(git_user,AppSpec),
+    VmDir=extract_app_spec(vm_dir,AppSpec),
+    VmId=extract_app_spec(vm_id,AppSpec),
+    
+    % Create a Vm  
+    
+    %service:create(ServiceId,ServiceVsn,Vm,VmDir,StartCmd,EnvVars,GitPath)->
     {ok,HostId}=net:gethostname(),
     DbaseNode=list_to_atom("dbase@"++HostId),
     {ok,DbaseNode}=slave:start(HostId,dbase,"-pa dbase/ebin -setcookie abc"),

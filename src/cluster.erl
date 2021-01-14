@@ -83,8 +83,9 @@ syslog()->
 dbase()->
     {ok,AppSpec}=file:consult(?StartConfigC2), %Start system from c2 host
    
-    DbaseEnvs=AppSpec,
-    exit(glurk),
+    DbaseEnvs=extract_app_spec(env_vars,AppSpec),
+    GitPath=extract_app_spec(git_path,AppSpec),
+    StartCmd=extract_app_spec(git_path,AppSpec),
 
     {ok,HostId}=net:gethostname(),
     DbaseNode=list_to_atom("dbase@"++HostId),
@@ -132,6 +133,44 @@ app_spec_key(env_vars,L)->
      {services,[L2]}=lists:keyfind(services,1,L),
      {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
     EnvVars;
+
+app_spec_key(git_user,L)->
+    {services,[L2]}=lists:keyfind(services,1,L),
+    {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
+    {dbase,git_user,GitUser}=lists:keyfind(git_user,2,EnvVars),
+    GitUser;
+
+app_spec_key(git_pw,L)->
+    {services,[L2]}=lists:keyfind(services,1,L),
+    {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
+    {dbase,git_pw,GitPw}=lists:keyfind(git_pw,2,EnvVars),
+    GitPw;
+
+app_spec_key(cl_dir,L)->
+    {services,[L2]}=lists:keyfind(services,1,L),
+    {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
+    {dbase,cl_dir,ClDir}=lists:keyfind(cl_dir,2,EnvVars),
+    ClDir;
+
+app_spec_key(cl_file,L)->
+    {services,[L2]}=lists:keyfind(services,1,L),
+    {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
+    {dbase,cl_file,ClFile}=lists:keyfind(cl_file,2,EnvVars),
+    ClFile;
+
+app_spec_key(app_specs_dir,L)->
+    {services,[L2]}=lists:keyfind(services,1,L),
+    {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
+    {dbase,app_specs_dir,AppSpecs}=lists:keyfind(app_specs_dir,2,EnvVars),
+    AppSpecs;
+
+app_spec_key(dbase_nodes,L)->
+    {services,[L2]}=lists:keyfind(services,1,L),
+    {env_vars,EnvVars}=lists:keyfind(env_vars,1,L2),
+    {dbase,dbase_nodes,DbaseNodes}=lists:keyfind(dbase_nodes,2,EnvVars),
+    DbaseNodes;
+
+
 app_spec_key(Key,L)->
     {Key,Value}=lists:keyfind(Key,1,L),
     Value.

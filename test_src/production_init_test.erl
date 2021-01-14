@@ -81,6 +81,19 @@ app_spec(AppSpec)->
 		  {dbase,service_specs_dir,"service_specs"},
 		  {dbase,dbase_nodes,[dbase@c0,dbase@c1,dbase@c2]}],
 		 cluster:extract_app_spec(env_vars,AppSpec)),
+
+    ?assertMatch("joq62",
+		 cluster:extract_app_spec(git_user,AppSpec)),
+      ?assertMatch("20Qazxsw20",
+		 cluster:extract_app_spec(git_pw,AppSpec)),
+   ?assertMatch("cluster_config",
+		 cluster:extract_app_spec(cl_dir,AppSpec)),
+   ?assertMatch("cluster_info.hrl",
+		 cluster:extract_app_spec(cl_file,AppSpec)),
+   ?assertMatch("app_specs",
+		 cluster:extract_app_spec(app_specs_dir,AppSpec)),
+   ?assertMatch(['dbase@c0','dbase@c1','dbase@c2'],
+		 cluster:extract_app_spec(dbase_nodes,AppSpec)),
     ok.
 %% --------------------------------------------------------------------
 %% Function:start/0 
